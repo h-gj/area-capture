@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: blob:"
+    />
+    <title>Select area</title>
+  </head>
+  <body>
+    <div id="hint"></div>
+    <div id="box">
+      <img id="shot" alt="" draggable="false" />
+      <canvas id="draw"></canvas>
+    </div>
+    <textarea id="text-input" hidden rows="1"></textarea>
+    <div id="color-tip" hidden></div>
+    <aside id="sidebar">
+      <h2>Annotate</h2>
+      <p>Draw on the capture, then choose an action. Esc cancels.</p>
+      <div class="tool-grid">
+        <button type="button" data-tool="arrow" class="active">Arrow</button>
+        <button type="button" data-tool="line">Line</button>
+        <button type="button" data-tool="rect">Rect</button>
+        <button type="button" data-tool="ellipse">Ellipse</button>
+        <button type="button" data-tool="pen">Pen</button>
+        <button type="button" data-tool="text">Text</button>
+        <button type="button" data-tool="blur">Blur</button>
+        <button type="button" data-action="undo">Undo</button>
+      </div>
+      <p class="label">Color</p>
+      <div class="swatches">
+        <button type="button" data-color="#e11d48" class="swatch active" style="background: #e11d48"></button>
+        <button type="button" data-color="#eab308" class="swatch" style="background: #eab308"></button>
+        <button type="button" data-color="#2563eb" class="swatch" style="background: #2563eb"></button>
+        <button type="button" data-color="#18181b" class="swatch" style="background: #18181b"></button>
+        <button type="button" data-color="#fafafa" class="swatch" style="background: #fafafa"></button>
+        <button type="button" id="picked-swatch" class="swatch custom" data-color="#e11d48" style="background: #e11d48"></button>
+      </div>
+      <button type="button" data-action="pick">Pick from capture</button>
+      <p class="label">Size</p>
+      <div class="sizes">
+        <button type="button" data-width="3">S</button>
+        <button type="button" data-width="4" class="active">M</button>
+        <button type="button" data-width="8">L</button>
+      </div>
+      <h2>Save</h2>
+      <button type="button" data-mode="ocr">OCR</button>
+      <button type="button" data-mode="clipboard">Copy image</button>
+      <button type="button" data-mode="file">Save as image</button>
+      <button type="button" data-mode="oss" class="primary">Save to OSS</button>
+    </aside>
+    <script type="module" src="./src/overlay.ts"></script>
+  </body>
+</html>

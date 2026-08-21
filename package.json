@@ -1,0 +1,61 @@
+{
+  "name": "area-capture",
+  "version": "1.0.0",
+  "description": "Tray app for selected-area OCR and screenshot upload to Aliyun OSS",
+  "main": "./out/main/index.js",
+  "author": "Area Capture",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "build": "electron-vite build",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "ali-oss": "^6.23.0",
+    "lucide-react": "^0.511.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "@types/react": "^18.3.21",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.5.0",
+    "autoprefixer": "^10.4.21",
+    "electron": "^35.2.1",
+    "electron-builder": "^26.0.12",
+    "electron-vite": "^3.1.0",
+    "postcss": "^8.5.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "build": {
+    "appId": "com.areacapture.app",
+    "productName": "Area Capture",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "out/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/icon.png",
+        "to": "icon.png"
+      },
+      {
+        "from": "python",
+        "to": "python"
+      }
+    ],
+    "linux": {
+      "target": ["dir"],
+      "category": "Utility",
+      "icon": "resources/icon.png"
+    }
+  }
+}

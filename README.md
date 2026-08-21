@@ -1,0 +1,38 @@
+# Area Capture
+
+Linux tray app for **selected-area OCR** and **selected-area screenshot upload to Aliyun OSS**.
+
+- OCR uses the same RapidOCR / PP-OCRv4 approach as `~/proj/HuTu`
+- OSS upload config is stored in `~/.config/area-capture/oss.json`
+
+## Run
+
+```bash
+cd ~/Projects/area-capture
+python3 -m venv .venv
+.venv/bin/pip install -r python/requirements.txt
+npm install
+npm run dev
+```
+
+The app stays in the **system tray**. **Click** the tray icon to select an area, then pick an action from the panel at the right of the selection. Open **History** or **Config** from the tray menu. Use **Quit** in the tray menu to exit.
+
+## Tray / hotkeys
+
+| Action | Default |
+| --- | --- |
+| Capture area (then pick action) | Click tray |
+| OCR selected area | `Ctrl+Shift+Alt+O` |
+| Copy selected area image | `Ctrl+Shift+Alt+C` |
+| Save selected area as PNG | `Ctrl+Shift+Alt+F` |
+| Save selected area to OSS | `Ctrl+Shift+Alt+S` |
+| History | Tray menu |
+| Config | Tray menu |
+
+Drag a rectangle, release to capture. After a tray click, annotate with arrow, line, rectangle, ellipse, pen, text, or blur, then choose OCR, copy image, save as image, or save to OSS. Esc cancels. Ctrl+Z undoes the last mark.
+
+## OSS
+
+Edit bucket, region, endpoint, keys, timeout, writable, and object prefix in **Config**. Values are saved to `~/.config/area-capture/oss.json` (prefix in `~/.config/area-capture/settings.json`).
+
+Uploads go to `{prefix}/{timestamp}-{rand}.png`.

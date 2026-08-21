@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Area Capture
+Comment=Selected-area OCR and OSS screenshot upload
+Exec=/home/hugaojian/Projects/area-capture/scripts/start.sh
+Icon=/home/hugaojian/Projects/area-capture/resources/icon.png
+Terminal=false
+Categories=Utility;Graphics;
+StartupWMClass=area-capture

@@ -1,0 +1,9 @@
+node_modules
+out
+dist
+.venv
+.DS_Store
+*.log
+.vscode
+*.tsbuildinfo
+.python-version

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <rect width="256" height="256" rx="58" fill="#1A1D23"/>
+
+  <!-- Selected-area corners -->
+  <path
+    d="M102 68H68V102"
+    stroke="#EDE8DC"
+    stroke-width="20"
+    stroke-linecap="butt"
+    stroke-linejoin="miter"
+  />
+  <path
+    d="M154 68H188V102"
+    stroke="#EDE8DC"
+    stroke-width="20"
+    stroke-linecap="butt"
+    stroke-linejoin="miter"
+  />
+  <path
+    d="M102 188H68V154"
+    stroke="#EDE8DC"
+    stroke-width="20"
+    stroke-linecap="butt"
+    stroke-linejoin="miter"
+  />
+  <path
+    d="M154 188H188V154"
+    stroke="#EDE8DC"
+    stroke-width="20"
+    stroke-linecap="butt"
+    stroke-linejoin="miter"
+  />
+
+  <!-- OCR text block, ragged right -->
+  <rect x="86" y="88" width="88" height="14" rx="3" fill="#EDE8DC" fill-opacity="0.92"/>
+  <rect x="86" y="110" width="46" height="14" rx="3" fill="#EDE8DC" fill-opacity="0.92"/>
+  <rect x="86" y="154" width="64" height="14" rx="3" fill="#EDE8DC" fill-opacity="0.92"/>
+
+  <!-- Amber scan between the lines, shorter than the frame -->
+  <rect x="80" y="131" width="96" height="12" rx="6" fill="#F0B429"/>
+</svg>

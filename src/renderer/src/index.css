@@ -1,0 +1,247 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --radius: 0.5rem;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+#hint {
+  position: fixed;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: hsl(240 10% 3.9% / 0.82);
+  color: white;
+  font: 13px/1.3 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+  z-index: 2;
+}
+
+#box {
+  display: none;
+  position: fixed;
+  border: 2px solid #fff;
+  background: hsl(0 0% 100% / 0.12);
+  box-shadow: 0 0 0 9999px hsl(240 10% 3.9% / 0.28);
+  pointer-events: none;
+}
+
+#shot,
+#draw {
+  display: none;
+}
+
+body.compose #box {
+  pointer-events: auto;
+  background: transparent;
+  overflow: hidden;
+}
+
+body.compose #shot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+body.compose #draw {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+#color-tip {
+  position: fixed;
+  z-index: 5;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px hsl(240 5.9% 10%), 0 4px 12px hsl(240 10% 3.9% / 0.25);
+  pointer-events: none;
+}
+
+body.picking #draw {
+  cursor: copy;
+}
+
+#sidebar .swatch.custom {
+  border-style: dashed;
+}
+
+#text-input {
+  position: fixed;
+  z-index: 4;
+  min-width: 120px;
+  max-width: 420px;
+  padding: 2px 6px;
+  border: 1px dashed currentColor;
+  border-radius: 4px;
+  background: hsl(0 0% 100% / 0.9);
+  outline: none;
+  resize: none;
+  font: 16px/1.3 ui-sans-serif, system-ui, sans-serif;
+}
+
+#sidebar {
+  display: none;
+  position: fixed;
+  width: 232px;
+  z-index: 3;
+  pointer-events: auto;
+  box-sizing: border-box;
+  padding: 14px 12px;
+  background: hsl(0 0% 100%);
+  color: hsl(240 10% 3.9%);
+  border: 1px solid hsl(240 5.9% 90%);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 24px hsl(240 10% 3.9% / 0.2);
+  font: 14px/1.4 ui-sans-serif, system-ui, sans-serif;
+  cursor: default;
+}
+
+#sidebar.open {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#sidebar h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+#sidebar p {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: hsl(240 3.8% 46.1%);
+}
+
+#sidebar p.label {
+  margin: 4px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: hsl(240 3.8% 46.1%);
+}
+
+#sidebar .tool-grid,
+#sidebar .sizes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+#sidebar .sizes {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+#sidebar .swatches {
+  display: flex;
+  gap: 8px;
+}
+
+#sidebar button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 32px;
+  border: 1px solid hsl(240 5.9% 90%);
+  border-radius: 0.5rem;
+  background: hsl(0 0% 100%);
+  color: hsl(240 10% 3.9%);
+  font: 12px/1 ui-sans-serif, system-ui, sans-serif;
+  cursor: pointer;
+}
+
+#sidebar button[data-mode] {
+  height: 36px;
+  font-size: 13px;
+}
+
+#sidebar button:hover {
+  background: hsl(240 4.8% 95.9%);
+}
+
+#sidebar button.active:not(.swatch) {
+  background: hsl(240 5.9% 10%);
+  border-color: hsl(240 5.9% 10%);
+  color: hsl(0 0% 98%);
+}
+
+#sidebar button.primary {
+  background: hsl(240 5.9% 10%);
+  border-color: hsl(240 5.9% 10%);
+  color: hsl(0 0% 98%);
+}
+
+#sidebar button.primary:hover,
+#sidebar button.active:hover {
+  opacity: 0.9;
+}
+
+#sidebar .swatch {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid hsl(240 5.9% 90%);
+}
+
+#sidebar .swatch.active {
+  outline: 2px solid hsl(240 5.9% 10%);
+  outline-offset: 2px;
+}
+
+html:has(#hint),
+html:has(#hint) body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: crosshair;
+  user-select: none;
+  background: hsl(240 10% 3.9% / 0.18);
+}
+
+body.actions {
+  cursor: default;
+}
