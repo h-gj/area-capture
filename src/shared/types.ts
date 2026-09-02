@@ -1,6 +1,6 @@
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; error: string }
 
-export type CaptureMode = 'ocr' | 'oss' | 'clipboard' | 'file'
+export type CaptureMode = 'ocr' | 'oss' | 'clipboard' | 'file' | 'stick'
 
 export type OverlayMode = CaptureMode | 'select'
 
@@ -20,7 +20,7 @@ export type ComposeReady = {
   height: number
 }
 
-export type ComposeTool = 'arrow' | 'line' | 'rect' | 'ellipse' | 'pen' | 'text' | 'blur'
+export type ComposeTool = 'arrow' | 'line' | 'rect' | 'ellipse' | 'pen' | 'text' | 'blur' | 'step'
 
 export type OcrLine = {
   text: string
@@ -86,13 +86,22 @@ export type OcrModel = {
   ready: boolean
 }
 
-export type AppSettings = {
+export type OverlayHotkeys = {
+  overlayClipboardHotkey: string
+  overlayFileHotkey: string
+  overlayOcrHotkey: string
+  overlayOssHotkey: string
+  overlayStickHotkey: string
+}
+
+export type AppSettings = OverlayHotkeys & {
   ossPrefix: string
   ocrModel: string
   ocrHotkey: string
   ossHotkey: string
   clipboardHotkey: string
   fileHotkey: string
+  stickHotkey: string
 }
 
 export type Bootstrap = {
@@ -108,4 +117,8 @@ export type Bootstrap = {
 export type StatusEvent = {
   kind: 'info' | 'success' | 'error'
   message: string
+}
+
+export type StickerReady = {
+  dataUrl: string
 }

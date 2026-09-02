@@ -1,6 +1,8 @@
 import { BrowserWindow, screen } from 'electron'
 import { join } from 'node:path'
-import type { OverlayMode, OverlayResult } from '../shared/types'
+import { keyEventFromInput, overlayModeForEvent } from '../shared/accelerator'
+import type { CaptureMode, OverlayMode, OverlayResult } from '../shared/types'
+import { loadSettings } from './settings'
 
 let overlay: BrowserWindow | null = null
 let pending: ((rect: OverlayResult | null) => void) | null = null
@@ -85,6 +87,15 @@ export function openOverlay(mode: OverlayMode): Promise<OverlayResult | null> {
 
   overlay.setAlwaysOnTop(true, 'screen-saver')
   overlay.setMenuBarVisibility(false)
+  overlay.setMenu(null)
+  overlay.webContents.setIgnoreMenuShortcuts(true)
+  overlay.webContents.on('before-input-event', (event, input) => {
+    if (input.type !== 'keyDown') return
+    const mode = overlayModeForEvent(keyEventFromInput(input), loadSettings())
+    if (!mode) return
+    event.preventDefault()
+    sendToOverlay('overlay:hotkey', mode)
+  })
 
   const finish = new Promise<OverlayResult | null>((resolve) => {
     pending = resolve

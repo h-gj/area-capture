@@ -26,10 +26,21 @@ The app stays in the **system tray**. **Click** the tray icon to select an area,
 | Copy selected area image | `Ctrl+Shift+Alt+C` |
 | Save selected area as PNG | `Ctrl+Shift+Alt+F` |
 | Save selected area to OSS | `Ctrl+Shift+Alt+S` |
+| Stick selected area on screen | `Ctrl+Shift+D` |
 | History | Tray menu |
 | Config | Tray menu |
 
-Drag a rectangle, release to capture. After a tray click, annotate with arrow, line, rectangle, ellipse, pen, text, or blur, then choose OCR, copy image, save as image, or save to OSS. Esc cancels. Ctrl+Z undoes the last mark.
+While the annotate panel is open (configurable in **Config → While capturing**):
+
+| Action | Default |
+| --- | --- |
+| Copy image | `Ctrl+C` |
+| Save as image | `Ctrl+S` |
+| OCR | `Ctrl+R` |
+| Save to OSS | `Ctrl+O` |
+| Stick on screen | `Ctrl+Shift+D` |
+
+Drag a rectangle, release to capture. After a tray click, annotate with arrow, line, rectangle, ellipse, pen, text, step numbers, or blur, then choose OCR, copy image, save as image, save to OSS, or stick on screen — or use the shortcuts above. Esc cancels. Ctrl+Z undoes the last mark. A stuck capture stays on top with a light/dark outline; drag to move it (including partly off-screen), scroll to scale, and right-click to **Copy as image**, **Save as image**, or **Delete** (Esc also removes it).
 
 ## OSS
 

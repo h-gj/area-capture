@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { DEFAULT_OVERLAY_HOTKEYS } from '@shared/accelerator'
 import type { AppSettings, Bootstrap, OssSourceEdit, StatusEvent } from '@shared/types'
 import { Button } from './ui'
 
@@ -8,7 +9,9 @@ const emptySettings: AppSettings = {
   ocrHotkey: 'CommandOrControl+Shift+Alt+O',
   ossHotkey: 'CommandOrControl+Shift+Alt+S',
   clipboardHotkey: 'CommandOrControl+Shift+Alt+C',
-  fileHotkey: 'CommandOrControl+Shift+Alt+F'
+  fileHotkey: 'CommandOrControl+Shift+Alt+F',
+  stickHotkey: 'CommandOrControl+Shift+D',
+  ...DEFAULT_OVERLAY_HOTKEYS
 }
 
 const emptyOss: OssSourceEdit = {
@@ -245,6 +248,10 @@ export default function ConfigPage() {
 
         <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
           <h2 className="mb-3 text-sm font-medium">Hotkeys</h2>
+          <h3 className="mb-3 text-sm font-medium">Start capture</h3>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Global shortcuts that begin a new capture from the tray.
+          </p>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="grid gap-1 text-sm">
               <span className="text-muted-foreground">OCR hotkey</span>
@@ -279,6 +286,68 @@ export default function ConfigPage() {
                 className={fieldClass}
                 value={settings.ossHotkey}
                 onChange={(e) => setSettings({ ...settings, ossHotkey: e.target.value })}
+                onBlur={() => persist(settings)}
+              />
+            </label>
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted-foreground">Stick on screen hotkey</span>
+              <input
+                className={fieldClass}
+                value={settings.stickHotkey}
+                onChange={(e) => setSettings({ ...settings, stickHotkey: e.target.value })}
+                onBlur={() => persist(settings)}
+              />
+            </label>
+          </div>
+          <h3 className="mb-3 mt-5 text-sm font-medium">While capturing</h3>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Used after an area is selected, while the annotate panel is open.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted-foreground">Copy image</span>
+              <input
+                className={fieldClass}
+                value={settings.overlayClipboardHotkey}
+                onChange={(e) =>
+                  setSettings({ ...settings, overlayClipboardHotkey: e.target.value })
+                }
+                onBlur={() => persist(settings)}
+              />
+            </label>
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted-foreground">Save as image</span>
+              <input
+                className={fieldClass}
+                value={settings.overlayFileHotkey}
+                onChange={(e) => setSettings({ ...settings, overlayFileHotkey: e.target.value })}
+                onBlur={() => persist(settings)}
+              />
+            </label>
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted-foreground">OCR</span>
+              <input
+                className={fieldClass}
+                value={settings.overlayOcrHotkey}
+                onChange={(e) => setSettings({ ...settings, overlayOcrHotkey: e.target.value })}
+                onBlur={() => persist(settings)}
+              />
+            </label>
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted-foreground">Save to OSS</span>
+              <input
+                className={fieldClass}
+                value={settings.overlayOssHotkey}
+                onChange={(e) => setSettings({ ...settings, overlayOssHotkey: e.target.value })}
+                onBlur={() => persist(settings)}
+              />
+            </label>
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted-foreground">Stick on screen</span>
+              <input
+                className={fieldClass}
+                value={settings.overlayStickHotkey}
+                onChange={(e) => setSettings({ ...settings, overlayStickHotkey: e.target.value })}
                 onBlur={() => persist(settings)}
               />
             </label>

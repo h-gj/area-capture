@@ -6,11 +6,12 @@
   "author": "Area Capture",
   "license": "MIT",
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=300 electron-vite dev",
     "start": "electron-vite preview",
     "build": "electron-vite build",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
+    "test": "node --experimental-strip-types --experimental-default-type=module --test src/shared/*.test.ts",
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {

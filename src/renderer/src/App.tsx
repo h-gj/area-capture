@@ -12,6 +12,7 @@ function kindLabel(kind: CaptureMode): string {
   if (kind === 'ocr') return 'OCR'
   if (kind === 'oss') return 'OSS'
   if (kind === 'clipboard') return 'Clipboard'
+  if (kind === 'stick') return 'Stick'
   return 'File'
 }
 

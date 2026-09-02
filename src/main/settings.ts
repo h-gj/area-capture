@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
+import { DEFAULT_OVERLAY_HOTKEYS } from '../shared/accelerator'
 import type { AppSettings, HistoryItem } from '../shared/types'
 import { configDir, historyPath, settingsPath } from './paths'
 
@@ -9,7 +10,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
   ocrHotkey: 'CommandOrControl+Shift+Alt+O',
   ossHotkey: 'CommandOrControl+Shift+Alt+S',
   clipboardHotkey: 'CommandOrControl+Shift+Alt+C',
-  fileHotkey: 'CommandOrControl+Shift+Alt+F'
+  fileHotkey: 'CommandOrControl+Shift+Alt+F',
+  stickHotkey: 'CommandOrControl+Shift+D',
+  ...DEFAULT_OVERLAY_HOTKEYS
 }
 
 function readJson<T>(file: string, fallback: T): T {

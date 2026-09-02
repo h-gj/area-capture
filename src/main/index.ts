@@ -34,6 +34,7 @@ import { completeOverlay, hideOverlay, isOverlayOpen, openOverlay, revealOverlay
 import { getOssSource, objectKey, putLocalFile, saveOssSource } from './oss'
 import { capturesDir, iconPath, ossConfigPath, pythonBin } from './paths'
 import { loadHistory, loadSettings, pushHistory, saveHistory, saveSettings } from './settings'
+import { closeAllStickers, setStickerIo, showSticker } from './sticker'
 import { isAutostartEnabled, setAutostartEnabled } from './autostart'
 
 let tray: Tray | null = null
@@ -127,7 +128,7 @@ function createConfigWindow(): BrowserWindow {
 
   configWindow = new BrowserWindow({
     width: 640,
-    height: 860,
+      height: 1020,
     minWidth: 520,
     minHeight: 560,
     show: false,
@@ -199,6 +200,7 @@ const OVERLAY_HINT: Record<OverlayMode, string> = {
   oss: 'Drag to select an area to upload',
   clipboard: 'Drag to copy the image',
   file: 'Drag to save as an image file',
+  stick: 'Drag to pin the selection on screen',
   select: 'Drag to select an area, annotate, then pick an action'
 }
 
@@ -299,6 +301,10 @@ async function runCapture(requested: OverlayMode): Promise<HistoryItem> {
       await copyPngToClipboard(imagePath)
       notify('Image copied', 'Selection is on the clipboard')
       emitStatus({ kind: 'success', message: 'Image copied to clipboard' })
+    } else if (mode === 'stick') {
+      showSticker(imagePath, picked)
+      notify('Stuck on screen', 'Drag to move · scroll to scale · right-click for actions')
+      emitStatus({ kind: 'success', message: 'Stuck on screen' })
     } else {
       const savedPath = await saveCaptureDialog(imagePath)
       item.savedPath = savedPath
@@ -357,9 +363,17 @@ async function grabForCompose(rect: ScreenRect): Promise<void> {
 
 function bindShortcut(accelerator: string, mode: CaptureMode, label: string): void {
   const ok = globalShortcut.register(accelerator, () => {
+    if (isOverlayOpen()) {
+      sendToOverlay('overlay:hotkey', mode)
+      return
+    }
     runCapture(mode).catch(() => undefined)
   })
-  if (!ok) emitStatus({ kind: 'error', message: `Could not bind ${label} hotkey ${accelerator}` })
+  if (!ok) {
+    const message = `Could not bind ${label} hotkey ${accelerator}`
+    emitStatus({ kind: 'error', message })
+    notify('Hotkey failed', message)
+  }
 }
 
 function registerShortcuts(): void {
@@ -369,6 +383,7 @@ function registerShortcuts(): void {
   bindShortcut(settings.clipboardHotkey, 'clipboard', 'copy image')
   bindShortcut(settings.fileHotkey, 'file', 'save image')
   bindShortcut(settings.ossHotkey, 'oss', 'OSS')
+  bindShortcut(settings.stickHotkey, 'stick', 'stick')
 }
 
 function trayTemplate(): MenuItemConstructorOptions[] {
@@ -379,6 +394,7 @@ function trayTemplate(): MenuItemConstructorOptions[] {
     { label: 'Copy selected area image', accelerator: settings.clipboardHotkey, click: () => runCapture('clipboard').catch(() => undefined) },
     { label: 'Save selected area as image', accelerator: settings.fileHotkey, click: () => runCapture('file').catch(() => undefined) },
     { label: 'Save selected area to OSS', accelerator: settings.ossHotkey, click: () => runCapture('oss').catch(() => undefined) },
+    { label: 'Stick selected area on screen', accelerator: settings.stickHotkey, click: () => runCapture('stick').catch(() => undefined) },
     { type: 'separator' },
     { label: 'History', click: () => showHistoryWindow() },
     { label: 'Config', click: () => showConfigWindow() },
@@ -409,11 +425,17 @@ if (!gotLock) {
   app.setName('Area Capture')
   if (process.platform === 'darwin') app.dock?.hide()
 
+  setStickerIo({
+    copyImage: copyPngToClipboard,
+    saveImage: saveCaptureDialog
+  })
+
   ipcMain.handle('bootstrap', () => wrap(() => bootstrap()))
   ipcMain.handle('capture:ocr', () => wrap(() => runCapture('ocr')))
   ipcMain.handle('capture:oss', () => wrap(() => runCapture('oss')))
   ipcMain.handle('capture:clipboard', () => wrap(() => runCapture('clipboard')))
   ipcMain.handle('capture:file', () => wrap(() => runCapture('file')))
+  ipcMain.handle('capture:stick', () => wrap(() => runCapture('stick')))
   ipcMain.handle('capture:select', () => wrap(() => runCapture('select')))
   ipcMain.handle('settings:save', (_event, next: AppSettings) =>
     wrap(() => {
@@ -493,5 +515,6 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
   quitting = true
+  closeAllStickers()
   globalShortcut.unregisterAll()
 })

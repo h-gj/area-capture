@@ -193,8 +193,19 @@ body.picking #draw {
 }
 
 #sidebar button[data-mode] {
+  justify-content: space-between;
   height: 36px;
+  padding: 0 10px;
   font-size: 13px;
+}
+
+#sidebar button[data-mode] kbd {
+  font: 11px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  opacity: 0.55;
+}
+
+#sidebar button.primary kbd {
+  opacity: 0.7;
 }
 
 #sidebar button:hover {

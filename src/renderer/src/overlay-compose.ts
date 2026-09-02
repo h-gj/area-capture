@@ -1,4 +1,6 @@
 import type { ComposeTool } from '@shared/types'
+import { nextStepNumber, stepBadgeRadius } from '@shared/compose-step'
+import { hitTopTextShape, pointerMovedEnough, textFontSize, textLineHeight } from '@shared/compose-text'
 
 export type Shape = {
   tool: ComposeTool
@@ -84,7 +86,7 @@ export function drawShape(ctx: CanvasRenderingContext2D, shape: Shape, source: H
       ctx.drawImage(source, 0, 0, ctx.canvas.width, ctx.canvas.height)
     }
   } else if (shape.tool === 'text' && shape.text) {
-    const size = 14 + shape.width * 4
+    const size = textFontSize(shape.width)
     ctx.font = `600 ${size}px ui-sans-serif, system-ui, sans-serif`
     ctx.textBaseline = 'top'
     ctx.lineJoin = 'round'
@@ -95,8 +97,22 @@ export function drawShape(ctx: CanvasRenderingContext2D, shape: Shape, source: H
     for (const line of lines) {
       ctx.strokeText(line, shape.x1, y)
       ctx.fillText(line, shape.x1, y)
-      y += size * 1.25
+      y += textLineHeight(size)
     }
+  } else if (shape.tool === 'step' && shape.text) {
+    const radius = stepBadgeRadius(shape.width, shape.text)
+    ctx.beginPath()
+    ctx.arc(shape.x1, shape.y1, radius, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.lineWidth = Math.max(2, shape.width / 2)
+    ctx.strokeStyle = contrast(shape.color)
+    ctx.stroke()
+    const size = radius * (shape.text.length > 1 ? 1.05 : 1.25)
+    ctx.font = `700 ${size}px ui-sans-serif, system-ui, sans-serif`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = contrast(shape.color)
+    ctx.fillText(shape.text, shape.x1, shape.y1)
   }
 
   ctx.restore()
@@ -113,6 +129,15 @@ export class Composer {
   private draft: Shape | null = null
   private drawing = false
   private textPos: { x: number; y: number; clientX: number; clientY: number } | null = null
+  private textRestore: { index: number; shape: Shape } | null = null
+  private textDrag: {
+    index: number
+    startX: number
+    startY: number
+    origX: number
+    origY: number
+    moved: boolean
+  } | null = null
   private readonly ctx: CanvasRenderingContext2D
 
   constructor(
@@ -137,6 +162,18 @@ export class Composer {
   }
 
   undo(): void {
+    if (this.textDrag) {
+      const shape = this.shapes[this.textDrag.index]
+      if (shape) {
+        shape.x1 = this.textDrag.origX
+        shape.y1 = this.textDrag.origY
+        shape.x2 = this.textDrag.origX
+        shape.y2 = this.textDrag.origY
+      }
+      this.textDrag = null
+      this.redraw()
+      return
+    }
     if (this.editingText) {
       this.cancelText()
       return
@@ -215,13 +252,35 @@ export class Composer {
     const p = this.canvasPoint(event)
     if (this.tool === 'text') {
       this.commitText()
-      this.textPos = { ...p, clientX: event.clientX, clientY: event.clientY }
-      this.textEl.hidden = false
-      this.textEl.value = ''
-      this.textEl.style.left = `${event.clientX}px`
-      this.textEl.style.top = `${event.clientY}px`
-      this.textEl.style.color = this.color
-      this.textEl.focus()
+      const index = hitTopTextShape(p.x, p.y, this.shapes, this.measureLine)
+      if (index >= 0) {
+        const shape = this.shapes[index]
+        this.textDrag = {
+          index,
+          startX: p.x,
+          startY: p.y,
+          origX: shape.x1,
+          origY: shape.y1,
+          moved: false
+        }
+        return
+      }
+      this.openTextEditor(p.x, p.y, event.clientX, event.clientY, this.color, this.lineWidth, '')
+      return
+    }
+    if (this.tool === 'step') {
+      const text = String(nextStepNumber(this.shapes))
+      this.shapes.push({
+        tool: 'step',
+        x1: p.x,
+        y1: p.y,
+        x2: p.x,
+        y2: p.y,
+        color: this.color,
+        width: this.lineWidth,
+        text
+      })
+      this.redraw()
       return
     }
     this.drawing = true
@@ -239,6 +298,20 @@ export class Composer {
   }
 
   private onMove(event: MouseEvent): void {
+    if (this.textDrag) {
+      const p = this.canvasPoint(event)
+      const dx = p.x - this.textDrag.startX
+      const dy = p.y - this.textDrag.startY
+      if (!this.textDrag.moved && pointerMovedEnough(dx, dy)) this.textDrag.moved = true
+      if (!this.textDrag.moved) return
+      const shape = this.shapes[this.textDrag.index]
+      shape.x1 = this.textDrag.origX + dx
+      shape.y1 = this.textDrag.origY + dy
+      shape.x2 = shape.x1
+      shape.y2 = shape.y1
+      this.redraw()
+      return
+    }
     if (!this.drawing || !this.draft) return
     const p = this.canvasPoint(event)
     this.draft.x2 = p.x
@@ -248,6 +321,27 @@ export class Composer {
   }
 
   private onUp(event: MouseEvent): void {
+    if (this.textDrag) {
+      const drag = this.textDrag
+      this.textDrag = null
+      if (!drag.moved) {
+        const shape = this.shapes[drag.index]
+        this.shapes.splice(drag.index, 1)
+        this.redraw()
+        const client = this.clientPoint(shape.x1, shape.y1)
+        this.textRestore = { index: drag.index, shape }
+        this.openTextEditor(
+          shape.x1,
+          shape.y1,
+          client.clientX,
+          client.clientY,
+          shape.color,
+          shape.width,
+          shape.text || ''
+        )
+      }
+      return
+    }
     if (!this.drawing || !this.draft) return
     if (event.button !== 0) return
     const p = this.canvasPoint(event)
@@ -266,25 +360,80 @@ export class Composer {
   commitText(): void {
     if (!this.textPos) return
     const text = this.textEl.value.trim()
+    const restore = this.textRestore
     if (text) {
-      this.shapes.push({
-        tool: 'text',
-        x1: this.textPos.x,
-        y1: this.textPos.y,
-        x2: this.textPos.x,
-        y2: this.textPos.y,
-        color: this.color,
-        width: this.lineWidth,
-        text
-      })
+      const next: Shape = restore
+        ? {
+            ...restore.shape,
+            text,
+            x1: this.textPos.x,
+            y1: this.textPos.y,
+            x2: this.textPos.x,
+            y2: this.textPos.y
+          }
+        : {
+            tool: 'text',
+            x1: this.textPos.x,
+            y1: this.textPos.y,
+            x2: this.textPos.x,
+            y2: this.textPos.y,
+            color: this.color,
+            width: this.lineWidth,
+            text
+          }
+      if (restore) this.shapes.splice(restore.index, 0, next)
+      else this.shapes.push(next)
     }
-    this.cancelText()
+    this.clearTextUi()
     this.redraw()
   }
 
   cancelText(): void {
+    if (this.textRestore) this.shapes.splice(this.textRestore.index, 0, this.textRestore.shape)
+    this.clearTextUi()
+    this.redraw()
+  }
+
+  private clearTextUi(): void {
     this.textPos = null
+    this.textRestore = null
     this.textEl.hidden = true
     this.textEl.value = ''
+  }
+
+  private measureLine = (line: string, fontSize: number): number => {
+    this.ctx.save()
+    this.ctx.font = `600 ${fontSize}px ui-sans-serif, system-ui, sans-serif`
+    const width = this.ctx.measureText(line).width
+    this.ctx.restore()
+    return width
+  }
+
+  private clientPoint(x: number, y: number): { clientX: number; clientY: number } {
+    const r = this.canvas.getBoundingClientRect()
+    return {
+      clientX: r.left + (x / this.canvas.width) * r.width,
+      clientY: r.top + (y / this.canvas.height) * r.height
+    }
+  }
+
+  private openTextEditor(
+    x: number,
+    y: number,
+    clientX: number,
+    clientY: number,
+    color: string,
+    strokeWidth: number,
+    value: string
+  ): void {
+    this.textPos = { x, y, clientX, clientY }
+    this.textEl.hidden = false
+    this.textEl.value = value
+    this.textEl.style.left = `${clientX}px`
+    this.textEl.style.top = `${clientY}px`
+    this.textEl.style.color = color
+    this.textEl.style.fontSize = `${textFontSize(strokeWidth)}px`
+    this.textEl.focus()
+    if (value) this.textEl.setSelectionRange(value.length, value.length)
   }
 }

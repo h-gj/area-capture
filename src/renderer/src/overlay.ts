@@ -1,5 +1,10 @@
 import './index.css'
-import type { CaptureMode, ComposeTool, OverlayResult } from '@shared/types'
+import {
+  DEFAULT_OVERLAY_HOTKEYS,
+  formatAccelerator,
+  overlayModeForEvent
+} from '@shared/accelerator'
+import type { CaptureMode, ComposeTool, OverlayHotkeys, OverlayResult } from '@shared/types'
 import { Composer } from './overlay-compose'
 
 const hint = document.getElementById('hint') as HTMLDivElement
@@ -17,15 +22,53 @@ const hints: Record<string, string> = {
   oss: 'Drag to capture · upload to OSS · Esc cancels',
   clipboard: 'Drag to capture · copy image · Esc cancels',
   file: 'Drag to capture · save as PNG · Esc cancels',
+  stick: 'Drag to capture · stick on screen · Esc cancels',
   select: 'Drag to select an area · annotate · then pick an action · Esc cancels'
 }
 hint.textContent = hints[preset] || hints.select
 
-const annotateHint = 'Annotate, then choose an action · Esc cancels · Ctrl+Z undo'
+const annotateHint = 'Annotate, then choose an action or shortcut · Esc cancels · Ctrl+Z undo'
+let overlayHotkeys: OverlayHotkeys = DEFAULT_OVERLAY_HOTKEYS
 let origin: { x: number; y: number; sx: number; sy: number } | null = null
 let selected: OverlayResult | null = null
 let composer: Composer | null = null
 let finishing = false
+
+const ACTION_LABELS: Record<CaptureMode, string> = {
+  ocr: 'OCR',
+  clipboard: 'Copy image',
+  file: 'Save as image',
+  oss: 'Save to OSS',
+  stick: 'Stick on screen'
+}
+
+const ACTION_HOTKEY: Record<CaptureMode, keyof OverlayHotkeys> = {
+  clipboard: 'overlayClipboardHotkey',
+  file: 'overlayFileHotkey',
+  ocr: 'overlayOcrHotkey',
+  oss: 'overlayOssHotkey',
+  stick: 'overlayStickHotkey'
+}
+
+function labelActions(hotkeys: OverlayHotkeys) {
+  sidebar.querySelectorAll('[data-mode]').forEach((el) => {
+    const button = el as HTMLButtonElement
+    const mode = button.dataset.mode as CaptureMode | undefined
+    if (!mode || !ACTION_LABELS[mode]) return
+    const label = document.createElement('span')
+    label.textContent = ACTION_LABELS[mode]
+    const kbd = document.createElement('kbd')
+    kbd.textContent = formatAccelerator(hotkeys[ACTION_HOTKEY[mode]])
+    button.replaceChildren(label, kbd)
+  })
+}
+
+labelActions(overlayHotkeys)
+window.api.bootstrap().then((res) => {
+  if (!res.ok) return
+  overlayHotkeys = res.data.settings
+  labelActions(overlayHotkeys)
+})
 
 function paint(x: number, y: number, w: number, h: number) {
   box.style.display = 'block'
@@ -201,22 +244,38 @@ sidebar.addEventListener('click', (event) => {
   if (button.dataset.mode) finish(button.dataset.mode as CaptureMode)
 })
 
-window.addEventListener('keydown', (event) => {
-  if (composer?.editingText) return
-  if (composer?.picking && event.key === 'Escape') {
-    event.preventDefault()
-    stopPicking()
-    return
-  }
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
-    event.preventDefault()
-    composer?.undo()
-    return
-  }
-  if (event.key === 'Escape') window.api.overlayCancel()
-})
+window.addEventListener(
+  'keydown',
+  (event) => {
+    if (composer?.editingText) return
+    if (composer?.picking && event.key === 'Escape') {
+      event.preventDefault()
+      stopPicking()
+      return
+    }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+      event.preventDefault()
+      composer?.undo()
+      return
+    }
+    const mode = overlayModeForEvent(event, overlayHotkeys)
+    if (mode && composer) {
+      event.preventDefault()
+      event.stopPropagation()
+      finish(mode)
+      return
+    }
+    if (event.key === 'Escape') window.api.overlayCancel()
+  },
+  true
+)
 
 window.api.onComposeReady((payload) => {
   if (selected) selected.imagePath = payload.imagePath
   showCompose(payload.dataUrl, payload.width, payload.height)
+})
+
+window.api.onOverlayHotkey((mode) => {
+  if (composer?.editingText) return
+  if (composer) finish(mode)
 })
