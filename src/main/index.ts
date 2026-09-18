@@ -361,10 +361,11 @@ async function grabForCompose(rect: ScreenRect): Promise<void> {
   }
 }
 
-function bindShortcut(accelerator: string, mode: CaptureMode, label: string): void {
+function bindShortcut(accelerator: string, mode: OverlayMode, label: string): void {
   const ok = globalShortcut.register(accelerator, () => {
     if (isOverlayOpen()) {
-      sendToOverlay('overlay:hotkey', mode)
+      if (mode === 'select') revealOverlay()
+      else sendToOverlay('overlay:hotkey', mode)
       return
     }
     runCapture(mode).catch(() => undefined)
@@ -379,6 +380,7 @@ function bindShortcut(accelerator: string, mode: CaptureMode, label: string): vo
 function registerShortcuts(): void {
   globalShortcut.unregisterAll()
   settings = loadSettings()
+  bindShortcut(settings.wakeHotkey, 'select', 'wake / select area')
   bindShortcut(settings.ocrHotkey, 'ocr', 'OCR')
   bindShortcut(settings.clipboardHotkey, 'clipboard', 'copy image')
   bindShortcut(settings.fileHotkey, 'file', 'save image')
@@ -388,7 +390,7 @@ function registerShortcuts(): void {
 
 function trayTemplate(): MenuItemConstructorOptions[] {
   return [
-    { label: 'Capture area', click: () => startSelectCapture() },
+    { label: 'Capture area', accelerator: settings.wakeHotkey, click: () => startSelectCapture() },
     { type: 'separator' },
     { label: 'OCR selected area', accelerator: settings.ocrHotkey, click: () => runCapture('ocr').catch(() => undefined) },
     { label: 'Copy selected area image', accelerator: settings.clipboardHotkey, click: () => runCapture('clipboard').catch(() => undefined) },

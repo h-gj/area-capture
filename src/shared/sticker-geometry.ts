@@ -1,4 +1,4 @@
-export const STICKER_BORDER = 7
+export const STICKER_BORDER = 0
 export const STICKER_MIN_SCALE = 0.2
 export const STICKER_MAX_SCALE = 8
 export const STICKER_SCALE_FACTOR = 1.1

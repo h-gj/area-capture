@@ -7,6 +7,7 @@ import { configDir, historyPath, settingsPath } from './paths'
 export const DEFAULT_SETTINGS: AppSettings = {
   ossPrefix: 'attachment/area-capture',
   ocrModel: 'ppocrv4-mobile',
+  wakeHotkey: 'Alt+A',
   ocrHotkey: 'CommandOrControl+Shift+Alt+O',
   ossHotkey: 'CommandOrControl+Shift+Alt+S',
   clipboardHotkey: 'CommandOrControl+Shift+Alt+C',

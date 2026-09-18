@@ -20,9 +20,17 @@ export function pythonDir(): string {
 
 export function pythonBin(): string {
   if (process.env.AREA_CAPTURE_PYTHON) return process.env.AREA_CAPTURE_PYTHON
-  const venv = join(projectRoot(), '.venv', 'bin', 'python')
+  if (app.isPackaged && process.platform === 'win32') {
+    const packaged = join(process.resourcesPath, 'python-runtime', 'python.exe')
+    if (existsSync(packaged)) return packaged
+  }
+  const venv = join(
+    projectRoot(),
+    '.venv',
+    process.platform === 'win32' ? join('Scripts', 'python.exe') : join('bin', 'python')
+  )
   if (existsSync(venv)) return venv
-  return 'python3'
+  return process.platform === 'win32' ? 'python' : 'python3'
 }
 
 export function configDir(): string {

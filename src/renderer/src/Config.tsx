@@ -6,6 +6,7 @@ import { Button } from './ui'
 const emptySettings: AppSettings = {
   ossPrefix: 'attachment/area-capture',
   ocrModel: 'ppocrv4-mobile',
+  wakeHotkey: 'Alt+A',
   ocrHotkey: 'CommandOrControl+Shift+Alt+O',
   ossHotkey: 'CommandOrControl+Shift+Alt+S',
   clipboardHotkey: 'CommandOrControl+Shift+Alt+C',
@@ -263,6 +264,15 @@ export default function ConfigPage() {
             Global shortcuts that begin a new capture from the tray.
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted-foreground">Wake / select area hotkey</span>
+              <input
+                className={fieldClass}
+                value={settings.wakeHotkey}
+                onChange={(e) => setSettings({ ...settings, wakeHotkey: e.target.value })}
+                onBlur={() => persist(settings)}
+              />
+            </label>
             <label className="grid gap-1 text-sm">
               <span className="text-muted-foreground">OCR hotkey</span>
               <input

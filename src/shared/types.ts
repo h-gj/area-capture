@@ -98,6 +98,7 @@ export type OverlayHotkeys = {
 export type AppSettings = OverlayHotkeys & {
   ossPrefix: string
   ocrModel: string
+  wakeHotkey: string
   ocrHotkey: string
   ossHotkey: string
   clipboardHotkey: string

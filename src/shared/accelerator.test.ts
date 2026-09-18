@@ -43,6 +43,11 @@ describe('eventMatchesAccelerator', () => {
       false
     )
   })
+
+  it('matches Alt+A', () => {
+    assert.equal(eventMatchesAccelerator(key({ key: 'a', altKey: true }), 'Alt+A'), true)
+    assert.equal(eventMatchesAccelerator(key({ key: 'a' }), 'Alt+A'), false)
+  })
 })
 
 const overlayHotkeys = {

@@ -218,7 +218,7 @@ export function showSticker(imagePath: string, rect: ScreenRect): void {
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
-    hasShadow: true,
+    hasShadow: false,
     enableLargerThanScreen: true,
     // Cinnamon keeps managed X11 windows on-screen. Chromium creates
     // non-activatable windows as override-redirect, which can hang off-screen.

@@ -14,6 +14,9 @@ export function autostartPath(): string {
 }
 
 export function isAutostartEnabled(): boolean {
+  if (process.platform === 'win32') {
+    return app.getLoginItemSettings().openAtLogin
+  }
   return existsSync(autostartPath())
 }
 
@@ -47,6 +50,14 @@ function desktopEntry(): string {
 }
 
 export function setAutostartEnabled(enabled: boolean): void {
+  if (process.platform === 'win32') {
+    app.setLoginItemSettings({
+      openAtLogin: enabled,
+      path: process.execPath,
+      args: ['--hidden']
+    })
+    return
+  }
   const file = autostartPath()
   if (!enabled) {
     try {

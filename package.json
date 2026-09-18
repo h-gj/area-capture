@@ -11,6 +11,7 @@
     "build": "electron-vite build",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
+    "dist:win": "npm run build && scripts/prepare-windows-python.sh && electron-builder --win --x64",
     "test": "node --experimental-strip-types --experimental-default-type=module --test src/shared/*.test.ts",
     "postinstall": "electron-builder install-app-deps"
   },
@@ -57,6 +58,27 @@
       "target": ["dir"],
       "category": "Utility",
       "icon": "resources/icon.png"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "resources/icon.png",
+      "extraResources": [
+        {
+          "from": "build/windows/python-runtime",
+          "to": "python-runtime"
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
     }
   }
 }
