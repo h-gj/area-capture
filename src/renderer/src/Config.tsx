@@ -19,6 +19,7 @@ const emptyOss: OssSourceEdit = {
   label: '',
   region: 'oss-cn-shenzhen',
   endpoint: 'oss-cn-shenzhen.aliyuncs.com',
+  customDomain: '',
   bucket: '',
   accessKeyId: '',
   accessKeySecret: '',
@@ -186,6 +187,15 @@ export default function ConfigPage() {
                 placeholder="oss-cn-shenzhen.aliyuncs.com"
                 value={oss.endpoint}
                 onChange={(e) => setOss({ ...oss, endpoint: e.target.value })}
+              />
+            </label>
+            <label className="grid gap-1 text-sm sm:col-span-2">
+              <span className="text-muted-foreground">Custom domain</span>
+              <input
+                className={fieldClass}
+                placeholder="cdn.example.com"
+                value={oss.customDomain}
+                onChange={(e) => setOss({ ...oss, customDomain: e.target.value })}
               />
             </label>
             <label className="grid gap-1 text-sm">

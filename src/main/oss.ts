@@ -9,6 +9,7 @@ type OssSource = {
   label?: string
   region?: string
   endpoint?: string
+  customDomain?: string
   bucket: string
   accessKeyId: string
   accessKeySecret: string
@@ -27,6 +28,7 @@ const EMPTY: OssSourceEdit = {
   label: '',
   region: 'oss-cn-shenzhen',
   endpoint: 'oss-cn-shenzhen.aliyuncs.com',
+  customDomain: '',
   bucket: '',
   accessKeyId: '',
   accessKeySecret: '',
@@ -52,6 +54,7 @@ function toEdit(src: OssSource): OssSourceEdit {
     label: src.label || src.bucket || '',
     region: src.region || '',
     endpoint: src.endpoint || '',
+    customDomain: src.customDomain || '',
     bucket: src.bucket || '',
     accessKeyId: src.accessKeyId || '',
     accessKeySecret: src.accessKeySecret || '',
@@ -72,6 +75,7 @@ function toSource(edit: OssSourceEdit): OssSource {
     label: String(edit.label || '').trim() || bucket,
     region: String(edit.region || '').trim() || undefined,
     endpoint: String(edit.endpoint || '').trim() || undefined,
+    customDomain: String(edit.customDomain || '').trim() || undefined,
     bucket,
     accessKeyId,
     accessKeySecret,
@@ -161,6 +165,8 @@ function getClient(src: OssSource): OSS {
 }
 
 function publicUrl(src: OssSource, objectName: string, putUrl?: string | null): string {
+  const customDomain = normalizeEndpoint(src.customDomain)
+  if (customDomain) return `https://${customDomain}/${objectName}`
   if (putUrl) return putUrl
   const endpoint = normalizeEndpoint(src.endpoint)
   if (endpoint) return `https://${src.bucket}.${endpoint}/${objectName}`

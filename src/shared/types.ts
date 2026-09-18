@@ -70,6 +70,7 @@ export type OssSourceEdit = {
   label: string
   region: string
   endpoint: string
+  customDomain: string
   bucket: string
   accessKeyId: string
   accessKeySecret: string

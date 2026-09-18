@@ -44,6 +44,6 @@ Drag a rectangle, release to capture. After a tray click, annotate with arrow, l
 
 ## OSS
 
-Edit bucket, region, endpoint, keys, timeout, writable, and object prefix in **Config**. Values are saved to `~/.config/area-capture/oss.json` (prefix in `~/.config/area-capture/settings.json`).
+Edit bucket, region, endpoint, custom domain, keys, timeout, writable, and object prefix in **Config**. Values are saved to `~/.config/area-capture/oss.json` (prefix in `~/.config/area-capture/settings.json`). Upload URLs use the custom domain when configured, and the endpoint otherwise.
 
 Uploads go to `{prefix}/{timestamp}-{rand}.png`.
