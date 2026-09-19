@@ -14,7 +14,7 @@ Get the latest builds from [GitHub Releases](https://github.com/h-gj/area-captur
 
 | Platform | File |
 | --- | --- |
-| Windows x64 | `Area Capture-Setup-1.0.0-x64.exe` |
+| Windows x64 | `Area.Capture-Setup-1.0.0-x64.exe` |
 | Linux x64 | `AreaCapture-1.0.0-linux-x64.tar.gz` |
 
 **Windows:** run the installer, choose a folder, then start **Area Capture** from the Start menu. Windows SmartScreen may warn on an unsigned build — use **More info → Run anyway**.
