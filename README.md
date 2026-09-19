@@ -8,9 +8,9 @@ Windows / Linux 托盘应用，用于**框选截图**：标注屏幕区域后，
 
 Tray screenshot tool for Windows and Linux: region capture, annotation, local OCR, pin-on-screen, Aliyun OSS upload.
 
-![Area Capture 标注面板](https://i.imgur.com/HJSrFkz.jpg)
+![Area Capture 演示](docs/demo.gif)
 
-截图界面实拍（[来源](https://imgur.com/a/VH2OxG4)）：拖出区域，在右侧标注，然后选择 OCR、复制、保存、OSS 或钉在屏幕上。
+框选 → 标注箭头 → OCR 复制料号与金额。循环约 4 秒。实拍见 [Imgur](https://imgur.com/a/VH2OxG4)。
 
 ## 下载
 
