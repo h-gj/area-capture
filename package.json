@@ -1,7 +1,7 @@
 {
   "name": "area-capture",
   "version": "1.0.0",
-  "description": "Tray app for selected-area OCR and screenshot upload to Aliyun OSS",
+  "description": "Windows / Linux 托盘框选截图工具：屏幕标注、本地 OCR、钉在屏幕、上传阿里云 OSS",
   "main": "./out/main/index.js",
   "author": "Area Capture",
   "license": "MIT",

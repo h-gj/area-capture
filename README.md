@@ -4,6 +4,10 @@ Windows / Linux 托盘应用，用于**框选截图**：标注屏幕区域后，
 
 兼容 **Windows 10/11 x64** 和 **Linux x64**。安装包内置便携 Python 运行时和 RapidOCR，无需系统安装 Python 即可识别文字。
 
+**关键词：** 框选截图、屏幕截图、OCR 文字识别、中文 OCR、系统托盘、Windows、Linux、屏幕标注、钉图、阿里云 OSS、Electron、RapidOCR、PP-OCRv4
+
+Tray screenshot tool for Windows and Linux: region capture, annotation, local OCR, pin-on-screen, Aliyun OSS upload.
+
 ![Area Capture 标注面板](https://i.imgur.com/HJSrFkz.jpg)
 
 截图界面实拍（[来源](https://imgur.com/a/VH2OxG4)）：拖出区域，在右侧标注，然后选择 OCR、复制、保存、OSS 或钉在屏幕上。
