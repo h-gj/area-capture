@@ -20,9 +20,13 @@ export function pythonDir(): string {
 
 export function pythonBin(): string {
   if (process.env.AREA_CAPTURE_PYTHON) return process.env.AREA_CAPTURE_PYTHON
-  if (app.isPackaged && process.platform === 'win32') {
-    const packaged = join(process.resourcesPath, 'python-runtime', 'python.exe')
-    if (existsSync(packaged)) return packaged
+  if (app.isPackaged) {
+    const win = join(process.resourcesPath, 'python-runtime', 'python.exe')
+    if (existsSync(win)) return win
+    for (const name of ['python3', 'python3.11', 'python']) {
+      const unix = join(process.resourcesPath, 'python-runtime', 'bin', name)
+      if (existsSync(unix)) return unix
+    }
   }
   const venv = join(
     projectRoot(),

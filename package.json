@@ -12,6 +12,7 @@
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
     "dist:win": "npm run build && scripts/prepare-windows-python.sh && electron-builder --win --x64",
+    "dist:linux": "npm run build && scripts/prepare-linux-python.sh && electron-builder --linux --x64",
     "test": "node --experimental-strip-types --experimental-default-type=module --test src/shared/*.test.ts",
     "postinstall": "electron-builder install-app-deps"
   },
@@ -55,9 +56,22 @@
       }
     ],
     "linux": {
-      "target": ["dir"],
+      "target": [
+        {
+          "target": "tar.gz",
+          "arch": ["x64"]
+        }
+      ],
+      "executableName": "area-capture",
       "category": "Utility",
-      "icon": "resources/icon.png"
+      "icon": "resources/icon.png",
+      "artifactName": "AreaCapture-${version}-linux-${arch}.${ext}",
+      "extraResources": [
+        {
+          "from": "build/linux/python-runtime",
+          "to": "python-runtime"
+        }
+      ]
     },
     "win": {
       "target": [
